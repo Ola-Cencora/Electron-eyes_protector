@@ -9,11 +9,11 @@ const App = () => {
   const [timer, setTimer] = useState(null);
 
   const formatTime = (sec) => {
-    if (sec === 0) {
+    /*if (sec === 0) {
       playBell();
       setStatus(status === 'work' ? 'rest' : 'work');
       setTime(status === 'work' ? 20 : 1200); 
-    }
+    }*/
 
     const minutes = Math.floor(sec / 60);
     const seconds = sec % 60;
@@ -27,11 +27,20 @@ const App = () => {
   };
 
   const startTimer = () => {
-    setTime(1200);
+    setTime(5);
     setStatus('work');
-    setTimer(setInterval(() => {
-      setTime(time => time - 1);
-    }, 1000))
+    setTimer(
+      setInterval(() => {
+        setTime(prevTime => {
+          if (prevTime < 1) {
+            playBell();
+            setStatus(status => (status === 'work' ? 'rest' : 'work'));
+            setTime(status === 'work' ? 2 : 7);
+          }
+          return prevTime - 1;
+        });
+      }, 1000)
+    );
   };
 
   const stopTimer = () => {
