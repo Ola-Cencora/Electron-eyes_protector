@@ -1,19 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { render } from 'react-dom';
 import { useState } from 'react';
 
 const App = () => {
 
   const [status, setStatus] = useState('off');
-  const [time, setTime] = useState(0);
+  const [time, setTime] = useState(null);
   const [timer, setTimer] = useState(null);
 
   const formatTime = (sec) => {
-    /*if (sec === 0) {
-      playBell();
-      setStatus(status === 'work' ? 'rest' : 'work');
-      setTime(status === 'work' ? 20 : 1200); 
-    }*/
 
     const minutes = Math.floor(sec / 60);
     const seconds = sec % 60;
@@ -27,20 +22,11 @@ const App = () => {
   };
 
   const startTimer = () => {
-    setTime(5);
+    setTime(1200);
     setStatus('work');
-    setTimer(
-      setInterval(() => {
-        setTime(prevTime => {
-          if (prevTime < 1) {
-            playBell();
-            setStatus(status => (status === 'work' ? 'rest' : 'work'));
-            setTime(status === 'work' ? 2 : 7);
-          }
-          return prevTime - 1;
-        });
-      }, 1000)
-    );
+    setTimer(setInterval(() => {
+      setTime(time => time - 1); 
+    }, 1000));
   };
 
   const stopTimer = () => {
@@ -57,7 +43,21 @@ const App = () => {
     const bell = new Audio('./sounds/bell.wav');
     bell.play();
   };
-  
+
+  useEffect(() => {
+    if (time === 0) {
+      if (status === 'work') {
+        setStatus('rest');
+        setTime(20);
+        playBell();
+      } else {
+        setStatus('work');
+        setTime(1200);
+        playBell();
+      }
+    }
+  }, [time]);
+    
   return (
     <div>
       <h1>Protect your eyes</h1>
